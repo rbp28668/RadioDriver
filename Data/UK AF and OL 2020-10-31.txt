@@ -1,0 +1,300 @@
+Abbots Bromley AS,135.480
+Abbotsley AS,135.480
+Aberdeen AF,119.055
+Abergavenny AS,135.480
+Aberporth AF,122.150
+Abingdon MIL,122.100
+Andrewsfield AF,130.555
+Audley End AF,135.480
+Badminton AS,123.180
+Bagby Thirsk AF,123.255
+Balado OL,118.605
+Barkston MIL,124.450
+Barton AF,120.255
+Beccles AF,120.380
+Bedford AF,119.030
+Benbecula AF,119.205
+Benson MIL,120.9
+Bentwaters AF,135.480
+Benwick AS,135.480
+Beverley AS,123.055
+Biggin Hill AF,129.405
+Birmingham AF,123.980
+Blackbushe AF,122.305
+Blackpool AF,119.950
+Bodmin AF,120.330
+Boscombe MIL,126.700
+Bossington AS,135.480
+Boughton AF,135.480
+Bourn AF,124.355
+Bournemouth AF,119.475
+Branscombe AF,135.480
+Breighton AF,129.805
+Bridlington,129.905
+Brimpton AS,135.130
+Bristol  AF,125.650
+BristolFiltn DU,135.480
+Brize Norton MIL,119.000
+Bruntingthrp AS,122.830
+Bryngwn Bach AS,135.480
+Burbage AS,135.480
+Burnham AS,135.480
+Caernarfon AF,122.255
+Calton Moor AS,135.480
+Cambridge AF,120.965
+Campbeltown AF,125.905 Campbeltown Info
+Cardiff AF,119.150
+Carlisle AF,123.605
+Caunton AS,135.480
+Chalgrove AF,125.410
+Charlton Park AS,122.200
+Chatteris AF,129.905
+Chichester AF,122.455
+Chilbolton AS,135.480
+Chiltern Park AS,134.030
+Clacton AF,118.155
+Clench Common AS,119.305
+Clipgate AS,135.480
+Clutton Hill Farm AS,135.480
+Colemore AS,135.480
+Colerne AF,120.075
+Coll AF,125.005
+Colonsay AF,123.805
+Compton Abbas AF,122.710
+Coningsby MIL,119.200
+Conington AF,129.725
+Coventry AF,123.830
+Cranfield AF,122.855
+Cranwell MIL,124.450
+Croft Farm AS,135.480
+Cromer AS,118.265
+Crosland Moor AF,128.375
+Crowfield AF,125.800
+Cumbernald AF,120.605
+Damyns Hall AF,119.555
+Darley Moor AF,135.480
+Deanland AS,129.730
+Deenethorpe AS,135.480
+Denham AF,130.730
+Deptford Dow AS,129.75
+Derby AF,118.355
+Doncaster AF,126.225
+Draycott Farm AS,135.480
+Dundee AF,122.905
+Dunkeswell AF,123.480
+Dunsfold AS,119.105
+Duxford AF,122.080
+Earls Colne AF,122.430
+East Fortune AF,118.755
+East Kirkby AF,135.480
+East Midlands AF,134.180
+East Winch AS,135.480
+Eastchurch AS,135.480
+Easton Maudit AS,135.480
+Eday AF,135.480
+Edinburgh AF,121.205
+Elmsett AS,135.480
+Elstree AF,122.405
+Elvington AF,119.630
+Errol Para AF,129.905
+Eshott AF,122.855
+Exeter AF,128.980
+Fadmoor AF,135.480
+Fair Isle AF,118.030
+Fairford MIL,119.000
+Fairoaks AF,123.430
+Farnborough AF,125.250
+Farthing AS,135.480
+Farway AF,135.480
+Felixkirk AS,135.480
+Felthorpe AF,135.480
+Fenland AF,122.930
+Fife A/F,130.455
+Finmere AF,135.480
+Fishburn AS,118.280
+Forwood AS,135.480
+Fowlmere AF,135.705
+Full Sutton AS,120.105
+Gatwick AF,126.825
+Glasgow AF,119.100
+Gloucester AF,128.555
+Grassthorpe Grange AS,135.480
+Great Massin AS,135.480
+Great Oakley AS,123.205
+Gunton Park AS,135.480
+Halfpenny Green AF,123.005
+Hardwick AF,135.480
+Hardwicke OL,135.480
+Haverfordwest AF,122.205
+Hawarden AF,120.055
+Headcorn AF,122.210
+Headon AS,135.480
+Henstridge AF,130.255
+Hibaldstow AS,129.925
+Hinderclay AS,135.480
+Hollym AF,135.480
+Humberside AF,119.130
+Huxham AS,135.480
+Inverness AF,122.605
+Islay AF,123.155
+Isle of Sky AF,135.480
+Kemble AF,118.430
+Kinloss AF,119.575
+Kirkbride AF,124.405
+Kirknewton AF,124.100
+Kirkwall AF,118.305
+Knettishall AS,135.480
+Lakenheath MIL,128.9
+Lands End AF,120.255
+Langar AS,129.905
+Ledbury AS,135.480
+Lee-on-solent,118.925
+Leeds AF,134.580
+Leeds East AF,126.505
+Leeming MIL,133.375
+Leicester AF,122.130
+Lerwick AF,125.305
+Leuchars MIL,126.500
+Linton MIL,118.550
+Little Gransden AS,130.855
+Little Snoring AS,118.130
+Little Staughton AF,135.480
+Liverpool AF,119.855
+LondonCity AF,132.700
+Lossiemouth MIL,119.575
+Lower Upham AS,135.480
+Lukesfield AF,129.830
+Luton AF,129.550
+Lydd AF,120.705
+Main Hall Fm AS,135.480
+Manchester AF,118.580
+Marshland AS,135.480
+Maypole AS,135.480
+Membury AS,135.480
+Meppershall AS,135.480
+Merryfield MIL,122.100
+Middle Wallop MIL,126.700
+Mildenhall MIL,128.900
+Mitchells Fm AS,135.480
+Mona MIL,118.955
+Monewden AF,135.480
+Moulton Farm AS,135.480
+Mount Airey AS,135.480
+Nantclwyd AS,130.380
+Napps Field AS,135.480
+Netheravon MIL,128.300
+Netherthorpe AF,123.280
+New Farm AS,135.480
+Newcastle AF,124.380
+Newmarket He AS,135.480
+Newquay AF,133.405
+North Coates AF,120.155
+North Denes AF,123.400
+North Ronaldsay AF,118.305
+North Weald AF,123.530
+Norwich AF,119.355
+Nottingham AF,134.880
+Nuthampstead AS,135.480
+Oakley AS,129.830
+Oaksey Park AS,132.230
+Old Buckenham AF,124.405
+Old Hay AS,135.480
+Old Sarum AF,129.905
+Old Warden AS,130.705
+Oxford AF,125.090
+Oxton AS,135.480
+Papa Westray AF,135.480
+Park Farm AS,135.480
+Pembrey AF,124.400
+Pent Farm AS,135.480
+Perranporth AF,119.755
+Perth AF,121.080
+Peterlee Para AS,129.905
+Plockton AF,131.910
+Plymouth OL,135.480
+Popham AF,129.805
+Porthtowan AS,135.480
+Pound Green AS,129.830
+Predannack MIL,134.050
+Prestwick AF,129.450
+Priory Farm OL,129.830
+Redhill AF,119.605
+Rednal AF,135.480
+Retford AF,130.480
+Ringstead AF,135.480
+Rochester AF,122.255
+Sanday AF,135.480
+Sandown AF,119.280
+Sandtoft AF,130.415
+Sandy AS,129.830
+Scampton MIL,119.500
+Scatsa AF,123.605
+Seething AS,118.435
+Shawbury MIL,133.150
+Sheepwash AS,135.480
+Shelford AS,135.480
+Sherburn AF,122.610
+Shipdham AS,132.255
+Shoreham AF,123.155
+Shotteswell AS,135.480
+Shrove AS,135.480
+Sibson AF,120.330
+Skegness AF,132.430
+Slinfold AS,135.480
+South Cerney AF,129.905
+Southampton AF,120.230
+Southend AF,130.780
+Spanhoe AS,135.480
+St Athan AF,119.15
+St Michaels AF,129.830
+Stansted AF,120.625
+Stapleford AF,122.805
+Stoke Golding AS,129.830
+Stornaway AF,119.480
+Stow Maries AF,118.980
+Strathallan AF,129.905
+Strathaven AF,135.480
+Stronsay AF,135.480
+Sturgate AS,130.305
+Sumburgh AF,123.150
+Sutton Meadows AS,129.830
+Swanborough AS,135.480
+Swansea AF,119.705
+Syerston MIL,128.525
+Sywell AF,122.705
+Talybont AS,135.480
+Tatenhill AF,124.080
+Teeside AF,118.855
+Temple Bruer AS,135.480
+Tern Hill MIL,122.1
+Thorney Island DU,135.480
+Thruxton AF,118.280
+Thurrock AS,135.480
+Tilstock AS,118.105
+Tiree AF,122.705
+Top Farm AS,135.480
+Topcliffe MIL,133.375
+Truro AF,129.800
+Turweston AF,122.180
+Unst AF,130.350
+Urchfont AS,135.480
+Valley MIL,125.225
+Waddington MIL,119.500
+Wadswick AS,135.480
+Warrington AF,135.480
+Warton AF,129.530
+Wellesbourne AF,124.030
+Welshpool AF,128.005
+Weston Zoyland AF,129.830
+Westray AF,118.305
+Wharf Farm AS,135.480
+White Waltham AF,122.605
+Wick AF,119.705
+Wickenby AF,122.455
+Willingham AS,135.480
+Wing Farm AS,135.480
+Winthorpe DU,135.480
+Wittering MIL,119.675
+Woodvale MIL,121.000
+Wyton AF,126.855
+Yeovil AF,130.805

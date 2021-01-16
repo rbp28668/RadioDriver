@@ -18,5 +18,25 @@
     <ClCompile Include="CupToSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="RadioStation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CupFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SourceFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="RadioStation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CupFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SourceFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -147,7 +147,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CupFile.cpp" />
     <ClCompile Include="CupToSource.cpp" />
+    <ClCompile Include="RadioStation.cpp" />
+    <ClCompile Include="SourceFile.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CupFile.h" />
+    <ClInclude Include="RadioStation.h" />
+    <ClInclude Include="SourceFile.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
