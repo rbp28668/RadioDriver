@@ -1,10 +1,9 @@
+// Ensure Teensy optimised version is used: https://github.com/PaulStoffregen/ST7735_t3
 #include <ST7735_t3.h>
 #include <st7735_t3_font_Arial.h>
 #include <st7735_t3_font_ComicSansMS.h>
-//#include <ST7789_t3.h>
+#include <SdFat.h>
 #include <TinyGPS.h>
-#include <SPI.h>
-#include "SdFat.h"
 #include "devAR620x.h"
 #include "BasicSerial.h"
 #include "Encoder.h"
@@ -27,13 +26,30 @@
 #define TFT_CS2 5
 #define TFT_BKL 9
 
+// Things found on SD card - bitmap
+#define RADIO_STATIONS 1
+#define CHANNELS 2
+#define CONFIG 4
+
+class Startup {
+  public: 
+  Startup();
+};
+
+
+Startup::Startup() {
+  pinMode(LED_BUILTIN, OUTPUT);
+  digitalWrite(LED_BUILTIN,HIGH);
+  delay(1000);
+}
+
+Startup startup;
+
 ST7735_t3 tft(TFT_CS,  TFT_DC, TFT_RST);
 
 // Support for FAT16/FAT32 and exFAT
 SdFs sd;
-FsFile file;
 
-Settings settings;
 Channels channels;
 RadioStations radioStations;
 
@@ -49,13 +65,14 @@ char radioBuffer[128];
 StationSelector selector(&radioStations, &channels);
 
 
-void changeSpiDevice(){
+static void changeSpiDevice(){
     // Turn off both devices, assume library code turns them on as needed.
   digitalWrite(TFT_CS,HIGH);
   digitalWrite(SD_CS, HIGH);
 }
 
-bool endsWith(const char* str, const char*suffix){
+
+static bool endsWith(const char* str, const char*suffix){
   size_t len = strlen(str);
   size_t slen = strlen(suffix);
 
@@ -68,12 +85,8 @@ bool endsWith(const char* str, const char*suffix){
   return true;
 }
 
-// Things found on SD card - bitmap
-#define RADIO_STATIONS 1
-#define CHANNELS 2
-#define CONFIG 4
 
-int loadStations(RadioStations& stations) {
+static int loadStations(RadioStations& stations) {
   FsFile dir;
   FsFile file;
 
@@ -81,8 +94,6 @@ int loadStations(RadioStations& stations) {
 
   char name[256];
   const char* cupSuffix = ".cup";
-  const char* datSuffix = ".dat";
-  const char* cfgSuffix = ".cfg";
 
   CupFile cup;
   
@@ -102,13 +113,7 @@ int loadStations(RadioStations& stations) {
         if( endsWith(name, cupSuffix)) {
           cup.read(file, stations);
           processedFile |= RADIO_STATIONS;
-        } else if( endsWith(name, datSuffix)) {
-          cup.read(file, channels);
-          processedFile |= CHANNELS;
-        } else if( endsWith(name, cfgSuffix)) {
-          cup.read(file, settings);
-          processedFile |= CONFIG;
-        }
+        } 
 
         file.close();
       }
@@ -119,7 +124,6 @@ int loadStations(RadioStations& stations) {
   }
   return processedFile;
 }
-
 
 void setup() {
   Serial.begin(9600);
@@ -152,7 +156,8 @@ void setup() {
 
   // Initialize the SD and try to read files;
   int stationsRead = 0;
-  
+
+ 
   // Read files from SD card but ignore if nav switch held down.
   if(!navSwitch.active()){
     tft.setCursor(1,65);

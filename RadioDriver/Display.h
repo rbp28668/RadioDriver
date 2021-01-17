@@ -1,7 +1,5 @@
 #pragma once
 
-class Channel;
-
 class Display {
   void formatDist(char* buff, float dist);
   void formatBearing(char* buff, float degrees);
