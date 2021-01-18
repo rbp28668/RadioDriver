@@ -4,7 +4,7 @@
 
 #include "SdFat.h"
 
-float stof(const char* str, size_t* pos = 0) {
+static float stof(const char* str, size_t* pos = 0) {
 
   char* endp = 0;
   double val = strtod(str, &endp);

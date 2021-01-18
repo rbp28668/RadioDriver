@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "RadioStation.h"
 
-extern const PROGMEM RadioStation defaultStations[] = {
+extern const RadioStation defaultStations[] = {
 {"Abbots Bromley AS",135480,52.8167,-1.9},
 {"Abbotsley AS",135480,52.1975,-0.193333},
 {"Aberdeen AF",119055,57.2037,-2.20017},

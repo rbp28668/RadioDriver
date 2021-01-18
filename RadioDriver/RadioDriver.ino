@@ -1,10 +1,9 @@
+// Ensure Teensy optimised version is used: https://github.com/PaulStoffregen/ST7735_t3
 #include <ST7735_t3.h>
 #include <st7735_t3_font_Arial.h>
 #include <st7735_t3_font_ComicSansMS.h>
-//#include <ST7789_t3.h>
+#include <SdFat.h>
 #include <TinyGPS.h>
-#include <SPI.h>
-#include "SdFat.h"
 #include "devAR620x.h"
 #include "BasicSerial.h"
 #include "Encoder.h"
@@ -27,16 +26,19 @@
 #define TFT_CS2 5
 #define TFT_BKL 9
 
+// Things found on SD card - bitmap
+#define RADIO_STATIONS 1
+#define CHANNELS 2
+#define CONFIG 4
+
 ST7735_t3 tft(TFT_CS,  TFT_DC, TFT_RST);
 
 // Support for FAT16/FAT32 and exFAT
 SdFs sd;
-FsFile file;
 
-Settings settings;
 Channels channels;
 RadioStations radioStations;
-
+Settings settings;
 Serial1T radioSerial;
 AR620x radio(&radioSerial);
 Encoder encoder(23,22);
@@ -45,17 +47,20 @@ Switch selectASwitch(20); // to choose selector
 Switch selectBSwitch(19); // to choose selector
 Switch navSwitch(18);     // to request nav details
 TinyGPS gps;
+TinyGPS gps2;
 char radioBuffer[128];
 StationSelector selector(&radioStations, &channels);
+unsigned long lastGpsFix;
 
 
-void changeSpiDevice(){
+static void changeSpiDevice(){
     // Turn off both devices, assume library code turns them on as needed.
   digitalWrite(TFT_CS,HIGH);
   digitalWrite(SD_CS, HIGH);
 }
 
-bool endsWith(const char* str, const char*suffix){
+
+static bool endsWith(const char* str, const char*suffix){
   size_t len = strlen(str);
   size_t slen = strlen(suffix);
 
@@ -68,12 +73,8 @@ bool endsWith(const char* str, const char*suffix){
   return true;
 }
 
-// Things found on SD card - bitmap
-#define RADIO_STATIONS 1
-#define CHANNELS 2
-#define CONFIG 4
 
-int loadStations(RadioStations& stations) {
+static int loadStations(RadioStations& stations) {
   FsFile dir;
   FsFile file;
 
@@ -81,8 +82,8 @@ int loadStations(RadioStations& stations) {
 
   char name[256];
   const char* cupSuffix = ".cup";
-  const char* datSuffix = ".dat";
-  const char* cfgSuffix = ".cfg";
+  const char* channelSuffix = ".cnl";
+  const char* configSuffix = ".cfg";
 
   CupFile cup;
   
@@ -102,32 +103,30 @@ int loadStations(RadioStations& stations) {
         if( endsWith(name, cupSuffix)) {
           cup.read(file, stations);
           processedFile |= RADIO_STATIONS;
-        } else if( endsWith(name, datSuffix)) {
+        } else if( endsWith(name, channelSuffix)) {
           cup.read(file, channels);
           processedFile |= CHANNELS;
-        } else if( endsWith(name, cfgSuffix)) {
+        } else if( endsWith(name, configSuffix)) {
           cup.read(file, settings);
           processedFile |= CONFIG;
-        }
+        } 
 
         file.close();
       }
     }
     if (dir.getError()) {
-      processedFile = false; // indeterminate state so load defaults later
+      processedFile = 0; // indeterminate state so load defaults later
     }
   }
   return processedFile;
 }
 
-
 void setup() {
   Serial.begin(9600);
-
+  Serial.println("Startup");
+ 
   radioSerial.begin(9600);
   //pinMode(4,INPUT_PULLUP); // send to radio.
-
-  Serial3.begin(9600); // GPS input
 
   // SPI pins
   pinMode(11,OUTPUT);
@@ -152,7 +151,7 @@ void setup() {
 
   // Initialize the SD and try to read files;
   int stationsRead = 0;
-  
+ 
   // Read files from SD card but ignore if nav switch held down.
   if(!navSwitch.active()){
     tft.setCursor(1,65);
@@ -180,10 +179,10 @@ void setup() {
 
     
   // If data not read from SD card then load up defaults.
-  if( (stationsRead && RADIO_STATIONS) == 0){
+  if( (stationsRead & RADIO_STATIONS) == 0){
     radioStations.loadDefaults();
   }
-  if((stationsRead && CHANNELS) == 0){
+  if((stationsRead & CHANNELS) == 0){
     channels.loadDefaults();
   }
   radioStations.sortByName();
@@ -192,6 +191,7 @@ void setup() {
   selector.setEncoder(&encoder, &setSwitch);
   selector.setSelectionSwitches(&selectASwitch, &selectBSwitch);
   selector.setNavSwitch(&navSwitch);
+  selector.useKm(settings.useKm);
   selector.init(); // now switches & screen set up.
 
   // DEBUG - initialise to GRL
@@ -199,6 +199,10 @@ void setup() {
   double grlLon = -(0.0 + 06.0/60 + 55.0/3600);
   selector.setPosition(grlLat, grlLon, 0);
 
+
+  Serial3.begin(settings.gps1bps); // GPS input
+  Serial4.begin(settings.gps2bps); // Secondary GPS input
+  lastGpsFix = millis();
 }
 
 void loop() {
@@ -222,6 +226,8 @@ void loop() {
 //    Serial.println(radio.state().ActiveFrequency);
 //    Serial.println(radio.state().PassiveFrequency);
 //  }
+
+  
   // Update GPS
   // https://www.pjrc.com/teensy/td_libs_TinyGPS.html
   while (Serial3.available())  {
@@ -230,10 +236,11 @@ void loop() {
       float latitude;
       float longitude;
       unsigned long age;
-
       gps.f_get_position(&latitude, &longitude, &age);
       if(age != TinyGPS::GPS_INVALID_AGE && age < 10000) { // in last 10s
         selector.setPosition(latitude, longitude, age);
+        lastGpsFix = millis() - age;
+
          // Note also!!
         // float falt = gps.f_altitude(); // +/- altitude in meters
         // float fc = gps.f_course(); // course in degrees
@@ -241,6 +248,23 @@ void loop() {
         // float fmph = gps.f_speed_mph(); // speed in miles/hr
         // float fmps = gps.f_speed_mps(); // speed in m/sec
         // float fkmph = gps.f_speed_kmph(); // speed in km/hr
+      }
+    }
+  }
+
+  // Update secondary GPS if available.  If primary hasn't given a fix
+  // in the last 10s then use the data from this secondary GPS.
+  while (Serial4.available())  {
+    int c = Serial4.read();
+    if (gps2.encode(c)) {
+      float latitude;
+      float longitude;
+      unsigned long age;
+      gps2.f_get_position(&latitude, &longitude, &age);
+      if(age != TinyGPS::GPS_INVALID_AGE && age < 10000) { // in last 10s
+        if( (millis() - lastGpsFix) > 10000) {
+          selector.setPosition(latitude, longitude, age);
+        }
       }
     }
   }

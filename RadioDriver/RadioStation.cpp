@@ -1,4 +1,5 @@
-#include <Arduino.h>
+#include <cstring>
+#include <cstdlib>
 #include "RadioStation.h"
 
 const extern RadioStation defaultStations[];
@@ -27,7 +28,7 @@ void RadioStations::init() {
 }
 
 void RadioStations::loadDefaults(){
-  if(_total == 0) {
+   if(_total == 0) {
     int idx = 0;
     while(defaultStations[idx]._freq != 0) {
       add(new RadioStation(defaultStations[idx]._name, defaultStations[idx]._freq, defaultStations[idx]._lat, defaultStations[idx]._lon));

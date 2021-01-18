@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include "Channel.h"
 
-extern const PROGMEM Channel defaultChannels[] = {
+extern const Channel defaultChannels[] = {
   {"Emergency",121500},
   {"Safetycom", 135480},
   {"CGFF-1", 129980},

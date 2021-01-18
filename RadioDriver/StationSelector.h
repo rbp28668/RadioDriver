@@ -45,6 +45,7 @@ class StationSelector : public Encoder::Receiver, public Switch::Receiver {
 public:
   StationSelector(RadioStations* radioStations, Channels* channels);
 
+  void useKm(bool km = true) {_useKm = km;}
   void init();
   void pulse();
   void setPosition(float latitude, float longitude, unsigned long age);

@@ -6,8 +6,12 @@ extern const Channel defaultChannels[];
 Channel::Channel(const char* name, long freq)
 : _freq(freq)
 {
-  strncpy(_name, name, sizeof(_name));
-  _name[sizeof(_name) -1] = 0;
+  if(name && freq) {
+    strncpy(_name, name, sizeof(_name));
+    _name[sizeof(_name) -1] = 0;
+  } else {
+    _name[0] = 0;
+  }
 }
 
 Channels::Channels()
