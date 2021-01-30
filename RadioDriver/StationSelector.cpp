@@ -18,6 +18,7 @@ StationSelector::StationSelector(RadioStations* radioStations, Channels* channel
  , _gpsValid(false)
  , _rtDisplayStart(0)
  , _rtDisplayed(false)
+ , _lastDisplay(0)
  , _current(0)
  , _useKm(false)
 
@@ -44,7 +45,7 @@ void StationSelector::pulse() {
   
 
   bool gpsStatusChanged = false;
-  if( (millis() - _gpsSetMillis) > 1000 * 30) {
+  if( (millis() - _gpsSetMillis) > 1000 * 30) {  // 30 second timeout
     channelSelector.invalidateGPS();
     allStationsSelector.invalidateGPS();
     nearestStationSelector.invalidateGPS();
@@ -65,7 +66,7 @@ void StationSelector::pulse() {
 
   // Nav display on and time expired?
   if( !_navSwitch->active() && _rtDisplayed) {
-    if( (millis() - _rtDisplayStart) > 5000) {
+    if( (millis() - _rtDisplayStart) > 5000) { // 5 seconds for RT display
       _rtDisplayed = false;
       selectorChanged = true; // force redraw
     }
@@ -75,11 +76,14 @@ void StationSelector::pulse() {
     if(selectorChanged || gpsStatusChanged) {
       _current->drawCurrent(&_display);
       _current->drawNavigation(&_display, _useKm);
+      _lastDisplay = millis();
     }
   }
 }
 
 void StationSelector::setPosition(float latitude, float longitude, unsigned long age){
+  Serial.println("StationSelector::setPosition");
+
   _currentLat = latitude;
   _currentLon = longitude;
   _gpsSetMillis = millis() - age;  
@@ -91,10 +95,15 @@ void StationSelector::setPosition(float latitude, float longitude, unsigned long
   allStationsSelector.setPosition(latitude, longitude, age);
   nearestStationSelector.setPosition(latitude, longitude, age);
 
-  if(_current) {
+  // Want to redraw fairly frequently but not too often to reduce flicker etc.
+  unsigned long now = millis();
+  if(!_rtDisplayed && _current && (now - _lastDisplay) > 1000) {  // 1 second timeout
     _current->drawCurrent(&_display);
     _current->drawNavigation(&_display, _useKm);
+    _lastDisplay = now;
   }
+   Serial.println("/StationSelector::setPosition");
+
 }
 
 void StationSelector::setEncoder(Encoder* encoder, Switch* setSwitch){

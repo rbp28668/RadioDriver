@@ -1,5 +1,5 @@
 #pragma once
-#include "encoder.h"
+#include "Encoder.h"
 #include "Switch.h"
 #include "Display.h"
 #include "RadioStation.h"
@@ -29,8 +29,12 @@ class StationSelector : public Encoder::Receiver, public Switch::Receiver {
   unsigned long _gpsSetMillis; 
   bool _gpsValid;
 
+  // Track whether RT dialog displayed and for how long.
   unsigned long _rtDisplayStart;
   bool _rtDisplayed;
+
+  // When was last displayed.
+  unsigned long _lastDisplay;
   
   Selector* _current;  
   Display _display;

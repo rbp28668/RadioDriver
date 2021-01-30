@@ -1,3 +1,4 @@
+#include <string.h>
 #include "Display.h"
 
 #define ST7735 1
@@ -15,6 +16,22 @@ extern ST7735_t3 tft;
 extern TFT tft;
 
 #endif
+/*
+    initialMode,
+    channelMode,
+    positionReportMode,
+    invalidGpsMode,
+*/
+
+Display::Display()
+   : _currentMode(Mode::initialMode)
+   , _currentFrequency(0)
+   {
+  strcpy(_currentChannel,"");
+  strcpy( _currentRange,"");
+  strcpy( _currentTrack,"");
+  
+}
 
 void Display::formatDist(char* buff, float dist){
   int d10 = int(dist * 10 + 0.5); // to 10ths of NM
@@ -51,10 +68,19 @@ void Display::formatBearing(char* buff, float degrees){
 void Display::clear(){
   tft.fillScreen(ST7735_BLACK);
   tft.drawRect(0,0,tft.width(), tft.height(), ST7735_BLACK);
+  _currentMode = Mode::initialMode; // Nothing drawn yet.
 }
+
+
+// Helper method to see if the channel name has changed.
+bool Display::nameChanged(const char* name){
+  return strncmp(_currentChannel, name, sizeof(_currentChannel)) != 0;
+}
+
 
 void Display::drawChannel(const char* name, long frequency){
 
+  
   const int BUFFER_SIZE = 64;
   char nameBuff[BUFFER_SIZE];
   int count = 0;
@@ -83,17 +109,27 @@ void Display::drawChannel(const char* name, long frequency){
   f /= 10;
   freqBuff[0] = '0' + (f % 10);
 
-  clear();
+  if(_currentMode != Mode::channelMode || _currentFrequency != frequency || nameChanged(name)) {
+    clear();
+    
+    tft.setTextColor(ST7735_WHITE);
   
-  tft.setTextColor(ST7735_WHITE);
-
-  tft.setFont(Arial_18);
-  tft.setCursor(1,6);
-  tft.print(nameBuff);
-
-  tft.setFont(Arial_24);
-  tft.setCursor(20,65);
-  tft.print(freqBuff);
+    tft.setFont(Arial_18);
+    tft.setCursor(1,6);
+    tft.print(nameBuff);
+  
+    tft.setFont(Arial_24);
+    tft.setCursor(20,65);
+    tft.print(freqBuff);
+    
+    // Keep track of what's drawn.
+    _currentFrequency = frequency;
+    strncpy(_currentChannel, name, sizeof(_currentChannel));
+    strncpy(_currentRange, "", sizeof(_currentRange));
+    strncpy(_currentTrack, "", sizeof(_currentTrack));
+ 
+    _currentMode = Mode::channelMode;
+  }
 }
 
 
@@ -117,33 +153,40 @@ void Display::updateNavInfo(float nm, float track, bool useKm){
   // DDD.D
   char distStr[6];
   formatDist(distStr, nm);
+
+  // Has the information to display actually changed?
+  bool hasChanged =   strncmp(_currentRange, distStr, sizeof(_currentRange)) != 0 
+                  ||  strncmp(_currentTrack, trackStr, sizeof(_currentTrack)) != 0;
+
+  // Only update the display if it has changed.                
+  if(hasChanged) {  
+
+    tft.fillRect(0, y, tft.width(), height, ST7735_BLACK);
+ 
+    tft.setCursor(1,y);
+    tft.setFont(Arial_18);
+    tft.print(distStr);
   
-  tft.setCursor(1,y);
-  tft.setFont(Arial_18);
-  tft.print(distStr);
+    tft.setCursor(tft.getCursorX(), y+6); // +6 is difference in font sizes.
+    tft.setFont(Arial_12);
+    tft.print(unitsStr);
+  
+    tft.setFont(Arial_18);
+    int16_t x1,y1;
+    uint16_t w,h;
+    tft.getTextBounds("000",0,0,&x1,&y1,&w,&h);
+    tft.setCursor(tft.width() - w, y);
+    tft.print(trackStr);
 
-  tft.setCursor(tft.getCursorX(), y+6); // +6 is difference in font sizes.
-  tft.setFont(Arial_12);
-  tft.print(unitsStr);
-
-  tft.setFont(Arial_18);
-  int16_t x1,y1;
-  uint16_t w,h;
-  tft.getTextBounds("000",0,0,&x1,&y1,&w,&h);
-  tft.setCursor(tft.width() - w, y);
-  tft.print(trackStr);
+    // Update what has changed.
+    strncpy(_currentRange, distStr, sizeof(_currentRange));
+    strncpy(_currentTrack, trackStr, sizeof(_currentTrack));
+  }
 }
 
-void Display::noGPSReceived(){
-  clear();
-  
-  tft.setTextColor(ST7735_RED);
 
-  tft.setFont(Arial_24);
-  tft.setCursor(20,60);
-  tft.print("NO GPS");
-
-}
+// Call this instead of updating the nav information if
+// GPS is now invalid.
 void Display::invalidGPS(){
 
   const int height = 22;
@@ -162,7 +205,23 @@ void Display::invalidGPS(){
   tft.setCursor(tft.width() - w, y);
   tft.print("---");
 
+  // Update what's displayed to make sure it will
+  // redisplay if GPS comes back.
+  strncpy(_currentRange, "---", sizeof(_currentRange));
+  strncpy(_currentTrack, "---", sizeof(_currentTrack));
 
+}
+
+// Big NO GPS message for startup.
+void Display::noGPSReceived(){
+  clear();
+  
+  tft.setTextColor(ST7735_RED);
+
+  tft.setFont(Arial_24);
+  tft.setCursor(20,60);
+  tft.print("NO GPS");
+  _currentMode = Mode::invalidGpsMode;
 }
 
 void Display::showPositionReport(float rangeNM, float bearing, const char* cardinalPoint) {
@@ -191,5 +250,7 @@ void Display::showPositionReport(float rangeNM, float bearing, const char* cardi
   tft.setCursor(1, tft.height() - 30);
   tft.print("Brg: ");
   tft.print(trackStr);
+
+  _currentMode = Mode::positionReportMode;
   
 }

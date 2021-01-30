@@ -46,7 +46,6 @@ void RadioStationSelector::navToStation(const RadioStation* station, float* rang
 void RadioStationSelector::drawCurrent(Display* display){
   const Channel* channel = getChannel();
   if(channel){
-    display->clear();
     display->drawChannel(channel->_name, channel->_freq);  
   }
 }
