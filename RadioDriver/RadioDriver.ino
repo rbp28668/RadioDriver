@@ -95,10 +95,10 @@ static int loadStations(RadioStations& stations) {
     while (file.openNext(&dir, O_RDONLY)) {
   
       if(!file.isHidden() && !file.isDir()){
-        file.printFileSize(&Serial);
-        file.printModifyDateTime(&Serial);
-        file.printName(&Serial);
-
+        //file.printFileSize(&Serial);
+        //file.printModifyDateTime(&Serial);
+        //file.printName(&Serial);
+        // Serial.println();
         file.getName(name, sizeof(name));
         if( endsWith(name, cupSuffix)) {
           cup.read(file, stations);
@@ -122,9 +122,7 @@ static int loadStations(RadioStations& stations) {
 }
 
 void setup() {
-  Serial.begin(9600);
-  Serial.println("Startup");
- 
+
   radioSerial.begin(9600);
   //pinMode(4,INPUT_PULLUP); // send to radio.
 
