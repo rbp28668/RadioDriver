@@ -1,3 +1,4 @@
+#include <Arduino.h>
 #include <limits>
 #include "math.h"
 #include "NearestStationSelector.h"
@@ -5,9 +6,11 @@
 #include "Display.h"
 
 
-// Get nearest that has dist > nm2 
-// Also returns distance of nearest in *distance.
-const RadioStation* NearestStationSelector::nearestAfter(float nm2, float* distance){
+// Get nearest station that has distance^2 > nm2 i.e. the closest outside a given radius from 
+// this station.
+// Also returns distance^2 of nearest in *distance2.
+// Call this repeatedly, updating nm2 with the value returned by previous distance2 
+const RadioStation* NearestStationSelector::nearestAfter(float nm2, float* distance2){
   //Serial.print("Looking for nearest after ");
   //Serial.println(sqrt(nm2));
   const RadioStation* nearest = 0;
@@ -19,7 +22,7 @@ const RadioStation* NearestStationSelector::nearestAfter(float nm2, float* dista
       minDist = rangeSquared;
     }
   }
-  *distance = minDist;
+  *distance2 = minDist;
   return nearest;
 }
 
@@ -36,6 +39,9 @@ void NearestStationSelector::setNearestStations(){
 // Recalculates all the ranges based on new current position.
 void NearestStationSelector::recalculateRanges(){
   for(int i=0; i<NEAREST; ++i) {
+    if(nearestStations[i].station == 0) {
+      break;
+    }
     nearestStations[i].squaredRange = squaredRangeTo(nearestStations[i].station);
   }
 }
@@ -45,6 +51,10 @@ void NearestStationSelector::recalculateRanges(){
 // out of sequence items will soon end up sorted again.
 void NearestStationSelector::reSortStations() {
   for(int i=0; i<NEAREST-1; ++i) {
+    if(nearestStations[i+1].station == 0) {
+      break;
+    }
+
     if(nearestStations[i].squaredRange > nearestStations[i+1].squaredRange){
       StationRange temp = nearestStations[i];
       nearestStations[i] = nearestStations[i+1];
@@ -55,12 +65,17 @@ void NearestStationSelector::reSortStations() {
 
 // Replaces the furthest away station with the closest further away than the 
 // second further away.  May not change as more often than not it will just
-// find the same station.
+// find the same station.  Once a station is put in the top then it will
+// find its position after successive calls to reSortStations.
 void NearestStationSelector::replaceFurthest(){
-  float dist = nearestStations[NEAREST-2].squaredRange;
+  int top = NEAREST-1;
+  while(top > 0 && nearestStations[top].station == 0) {
+    --top;
+  }
+  float dist = nearestStations[top-1].squaredRange;
   const RadioStation* other = nearestAfter(dist, &dist);
-  nearestStations[NEAREST-1].station = other;
-  nearestStations[NEAREST-1].squaredRange = dist;
+  nearestStations[top].station = other;
+  nearestStations[top].squaredRange = dist;
 }
 
 
@@ -68,16 +83,24 @@ void NearestStationSelector::replaceFurthest(){
 void NearestStationSelector::setPosition(float latitude, float longitude, unsigned long age){
 
   RadioStationSelector::setPosition(latitude, longitude);
-  
+  Serial.println("NearestStationSelector::setPosition");
   if(hasInitialPosition) {
+     Serial.println("NearestStationSelector::recalculating");
+
     recalculateRanges();
     reSortStations();
     replaceFurthest();
+    Serial.println("/NearestStationSelector::recalculating");
+
   } else {  // Initialise from initial position
+    Serial.println("NearestStationSelector::initialising");
     setNearestStations();
     hasInitialPosition = true;
     _index = 0;
+    Serial.println("/NearestStationSelector::initialising");
   }
+    Serial.println("/NearestStationSelector::setPosition");
+
 }
 
 NearestStationSelector::NearestStationSelector(RadioStations* stations) :
@@ -90,8 +113,13 @@ NearestStationSelector::NearestStationSelector(RadioStations* stations) :
 
 void NearestStationSelector::up() {
   if(hasInitialPosition) {
+    int top = NEAREST-1;
+    while(top > 0 && nearestStations[top].station == 0) {
+      --top;
+    }
+
     ++_index;
-    if(_index >= NEAREST) {
+    if(_index >top) {
       _index = 0;
     }
   } 
@@ -101,7 +129,11 @@ void NearestStationSelector::down() {
   if(hasInitialPosition) {
     --_index;
     if(_index < 0) {
-      _index = NEAREST-1;
+      int top = NEAREST-1;
+      while(top > 0 && nearestStations[top].station == 0) {
+        --top;
+      }
+      _index = top;
     }
   }
 }

@@ -192,14 +192,14 @@ void setup() {
   selector.useKm(settings.useKm);
   selector.init(); // now switches & screen set up.
 
-  // DEBUG - initialise to GRL
-  double grlLat = 52.0 + 10.0/60 + 45.0/3600;
-  double grlLon = -(0.0 + 06.0/60 + 55.0/3600);
-  selector.setPosition(grlLat, grlLon, 0);
+//  // DEBUG - initialise to GRL
+//  double grlLat = 52.0 + 10.0/60 + 45.0/3600;
+//  double grlLon = -(0.0 + 06.0/60 + 55.0/3600);
+//  selector.setPosition(grlLat, grlLon, 0);
 
 
-  Serial3.begin(settings.gps1bps); // GPS input
-  Serial4.begin(settings.gps2bps); // Secondary GPS input
+  Serial2.begin(settings.gps1bps); // GPS input
+  Serial3.begin(settings.gps2bps); // Secondary GPS input
   lastGpsFix = millis();
 }
 
@@ -228,13 +228,22 @@ void loop() {
   
   // Update GPS
   // https://www.pjrc.com/teensy/td_libs_TinyGPS.html
-  while (Serial3.available())  {
-    int c = Serial3.read();
+  while (Serial2.available())  {
+    int c = Serial2.read();
+    Serial.print((char) c);
     if (gps.encode(c)) {
       float latitude;
       float longitude;
       unsigned long age;
       gps.f_get_position(&latitude, &longitude, &age);
+
+      Serial.println();
+      Serial.print("At ");
+      Serial.print(latitude);
+      Serial.print(",");
+      Serial.print(longitude);
+      Serial.println();
+
       if(age != TinyGPS::GPS_INVALID_AGE && age < 10000) { // in last 10s
         selector.setPosition(latitude, longitude, age);
         lastGpsFix = millis() - age;
@@ -252,8 +261,8 @@ void loop() {
 
   // Update secondary GPS if available.  If primary hasn't given a fix
   // in the last 10s then use the data from this secondary GPS.
-  while (Serial4.available())  {
-    int c = Serial4.read();
+  while (Serial3.available())  {
+    int c = Serial3.read();
     if (gps2.encode(c)) {
       float latitude;
       float longitude;
