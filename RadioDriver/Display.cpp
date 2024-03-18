@@ -215,9 +215,7 @@ void Display::invalidGPS(){
 // Big NO GPS message for startup.
 void Display::noGPSReceived(){
   clear();
-  
   tft.setTextColor(ST7735_RED);
-
   tft.setFont(Arial_24);
   tft.setCursor(20,60);
   tft.print("NO GPS");

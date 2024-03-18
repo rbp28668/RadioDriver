@@ -32,7 +32,6 @@ void StationSelector::init() {
 
 void StationSelector::pulse() {
   
-  
   Selector* prev = _current;
   if(_swA->active()){
     _current = &channelSelector;
@@ -82,8 +81,6 @@ void StationSelector::pulse() {
 }
 
 void StationSelector::setPosition(float latitude, float longitude, unsigned long age){
-  Serial.println("StationSelector::setPosition");
-
   _currentLat = latitude;
   _currentLon = longitude;
   _gpsSetMillis = millis() - age;  
@@ -102,8 +99,6 @@ void StationSelector::setPosition(float latitude, float longitude, unsigned long
     _current->drawNavigation(&_display, _useKm);
     _lastDisplay = now;
   }
-   Serial.println("/StationSelector::setPosition");
-
 }
 
 void StationSelector::setEncoder(Encoder* encoder, Switch* setSwitch){

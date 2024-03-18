@@ -25,7 +25,7 @@ void SourceFile::start()
 {
 	out << "#include \"RadioStation.h\"" << std::endl;
 	out << std::endl;
-	out << "extern const RadioStation stations[] = {" << std::endl;
+	out << "extern const RadioStation defaultStations[] = {" << std::endl;
 	isOpen = true;
 }
 

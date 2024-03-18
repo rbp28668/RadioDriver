@@ -5,7 +5,7 @@ extern const Channel defaultChannels[] = {
   {"Emergency",121500},
   {"Safetycom", 135480},
   {"CGFF-1", 129980},
-  {"CGFF-2", 118695},
+  {"CGFF-2", 118685},
   {"Sit Aware 1", 130105},
   {"Sit Aware 2", 130130},
   {"Cloud Flying", 130535},

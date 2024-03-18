@@ -1,3 +1,10 @@
+#include <ILI9341_fonts.h>
+#include <ST7735_t3.h>
+#include <ST7789_t3.h>
+#include <st7735_t3_font_Arial.h>
+#include <st7735_t3_font_ComicSansMS.h>
+
+
 // Ensure Teensy optimised version is used: https://github.com/PaulStoffregen/ST7735_t3
 #include <ST7735_t3.h>
 #include <st7735_t3_font_Arial.h>
@@ -87,38 +94,62 @@ static int loadStations(RadioStations& stations) {
 
   CupFile cup;
   
+  //Serial.println("Loading data");
+
   // Open root directory
   if (dir.open("/")){
+    //Serial.println("Opened root");
+
     // Open next file in root.
     // Warning, openNext starts at the current position of dir so a
     // rewind may be necessary in your application.
     while (file.openNext(&dir, O_RDONLY)) {
   
       if(!file.isHidden() && !file.isDir()){
-        //file.printFileSize(&Serial);
-        //file.printModifyDateTime(&Serial);
-        //file.printName(&Serial);
-        // Serial.println();
+
+        //file.printFileSize(&Serial); Serial.print(", ");
+        //file.printModifyDateTime(&Serial); Serial.print(", ");
+        //file.printName(&Serial); Serial.println();
+
         file.getName(name, sizeof(name));
         if( endsWith(name, cupSuffix)) {
+          //Serial.println("Reading stations");
           cup.read(file, stations);
           processedFile |= RADIO_STATIONS;
         } else if( endsWith(name, channelSuffix)) {
+          //Serial.println("Reading channels");
           cup.read(file, channels);
           processedFile |= CHANNELS;
         } else if( endsWith(name, configSuffix)) {
+          //Serial.println("Reading config");
           cup.read(file, settings);
           processedFile |= CONFIG;
         } 
-
         file.close();
       }
     }
+
     if (dir.getError()) {
       processedFile = 0; // indeterminate state so load defaults later
     }
   }
   return processedFile;
+}
+
+static void initTFT(){
+  pinMode(TFT_CS2,OUTPUT);  
+  pinMode(TFT_BKL,OUTPUT);
+  digitalWrite(TFT_CS2,HIGH);
+  digitalWrite(TFT_BKL,HIGH); 
+
+  changeSpiDevice(); 
+  // screen rotation & clearing clears edges properly.
+  tft.initR(INITR_BLACKTAB);
+  tft.setRotation(1);
+  tft.fillScreen(ST7735_BLACK);
+  tft.setRotation(3);
+  tft.fillScreen(ST7735_BLACK);
+  tft.setTextColor(ST7735_WHITE);
 }
 
 void setup() {
@@ -131,21 +162,7 @@ void setup() {
   pinMode(12,INPUT);
   pinMode(13,OUTPUT);
 
-  // And fire up extra TFT driving pins.
-  pinMode(TFT_CS2,OUTPUT);  
-  pinMode(TFT_BKL,OUTPUT);
-  digitalWrite(TFT_CS2,HIGH);
-  digitalWrite(TFT_BKL,HIGH);
-
-  changeSpiDevice(); // make sure both disabled.
-  
-  // screen rotation & clearing clears edges properly.
-  tft.initR(INITR_BLACKTAB);
-  tft.setRotation(1);
-  tft.fillScreen(ST7735_BLACK);
-  tft.setRotation(3);
-  tft.fillScreen(ST7735_BLACK);
-  tft.setTextColor(ST7735_WHITE);
+  initTFT();
 
   // Initialize the SD and try to read files;
   int stationsRead = 0;
@@ -172,10 +189,11 @@ void setup() {
       tft.print("FOUND");
       delay(3000);
     }
-    changeSpiDevice();
+
+    // Reinitialise screen after SPI has been used
+    initTFT();
   }
 
-    
   // If data not read from SD card then load up defaults.
   if( (stationsRead & RADIO_STATIONS) == 0){
     radioStations.loadDefaults();
@@ -183,9 +201,9 @@ void setup() {
   if((stationsRead & CHANNELS) == 0){
     channels.loadDefaults();
   }
-  radioStations.sortByName();
 
-    
+  radioStations.sortByName();
+     
   selector.setEncoder(&encoder, &setSwitch);
   selector.setSelectionSwitches(&selectASwitch, &selectBSwitch);
   selector.setNavSwitch(&navSwitch);

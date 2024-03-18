@@ -12,11 +12,13 @@
 int main()
 {
 	CupFile inputData;
-	std::ifstream airfields("E:\\Git\\RadioDriver\\Data\\UK AF and OL 2020-10-31.cup");
-	std::ifstream turnpoints("E:\\Git\\RadioDriver\\Data\\BGA TPs 2020-10-31.cup");
-
-	inputData.read(airfields);
-	inputData.read(turnpoints);
+	//std::ifstream airfields("E:\\Git\\RadioDriver\\Data\\UK AF and OL 2020-10-31.cup");
+	//std::ifstream turnpoints("E:\\Git\\RadioDriver\\Data\\BGA TPs 2020-10-31.cup");
+	std::ifstream combined24("D:\\Projects\\RadioDriver\\Data\\Combined 2024-03-01.cup");
+	
+	//inputData.read(airfields);
+	//inputData.read(turnpoints);
+	inputData.read(combined24);
 
 	inputData.sortByName();
 

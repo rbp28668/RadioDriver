@@ -83,24 +83,15 @@ void NearestStationSelector::replaceFurthest(){
 void NearestStationSelector::setPosition(float latitude, float longitude, unsigned long age){
 
   RadioStationSelector::setPosition(latitude, longitude);
-  Serial.println("NearestStationSelector::setPosition");
   if(hasInitialPosition) {
-     Serial.println("NearestStationSelector::recalculating");
-
     recalculateRanges();
     reSortStations();
     replaceFurthest();
-    Serial.println("/NearestStationSelector::recalculating");
-
   } else {  // Initialise from initial position
-    Serial.println("NearestStationSelector::initialising");
     setNearestStations();
     hasInitialPosition = true;
     _index = 0;
-    Serial.println("/NearestStationSelector::initialising");
   }
-    Serial.println("/NearestStationSelector::setPosition");
-
 }
 
 NearestStationSelector::NearestStationSelector(RadioStations* stations) :
