@@ -128,6 +128,10 @@ void Display::drawChannel(const char* name, long frequency){
     strncpy(_currentRange, "", sizeof(_currentRange));
     strncpy(_currentTrack, "", sizeof(_currentTrack));
  
+    _currentChannel[sizeof(_currentChannel)-1] = 0;
+    _currentRange[sizeof(_currentRange)-1] = 0;
+    _currentTrack[sizeof(_currentTrack)-1] = 0;
+ 
     _currentMode = Mode::channelMode;
   }
 }
@@ -181,6 +185,8 @@ void Display::updateNavInfo(float nm, float track, bool useKm){
     // Update what has changed.
     strncpy(_currentRange, distStr, sizeof(_currentRange));
     strncpy(_currentTrack, trackStr, sizeof(_currentTrack));
+    _currentRange[sizeof(_currentRange)-1] = 0;
+    _currentTrack[sizeof(_currentTrack)-1] = 0;
   }
 }
 
@@ -209,7 +215,6 @@ void Display::invalidGPS(){
   // redisplay if GPS comes back.
   strncpy(_currentRange, "---", sizeof(_currentRange));
   strncpy(_currentTrack, "---", sizeof(_currentTrack));
-
 }
 
 // Big NO GPS message for startup.

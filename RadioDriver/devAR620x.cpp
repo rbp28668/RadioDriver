@@ -20,9 +20,9 @@
 #define RADIO_VOLTAGE       /* read Radio Supply voltage and store it in BATT2 indicator */
 
 constexpr uint8_t HEADER_ID = 0xA5;
-#define PROTOKOL_ID     0x14
+#define PROTOCOL_ID     0x14
 #define QUERY           BIT(7)
-#define DAUL            BIT(8)
+#define DUAL            BIT(8)
 #define SQUELCH         BIT(7)
 
 #ifdef TESTBENCH
@@ -161,7 +161,7 @@ int  AR620x::setStation(uint8_t *Command ,int Active_Passive, FrequencyT fFreque
   IntConvertStruct ActiveFreqIdx;  ActiveFreqIdx.intVal16  = Frq2Idx(radioState.ActiveFrequency );
   IntConvertStruct PassiveFreqIdx; PassiveFreqIdx.intVal16 = Frq2Idx(radioState.PassiveFrequency);
   Command [len++] = HEADER_ID ;
-  Command [len++] = PROTOKOL_ID ;
+  Command [len++] = PROTOCOL_ID ;
   Command [len++] = 5;
 
   switch (Active_Passive)
@@ -190,7 +190,7 @@ AR620x::AR620x(BasicSerial* pbs)
     : serial(pbs)
 {
     assert(pbs);
-    radioState.ActiveFrequency = 121280L;
+    radioState.ActiveFrequency = 131280L;
     radioState.PassiveFrequency = 121500L;
 }
 
@@ -201,7 +201,7 @@ int len;
 
     len = 0;
     szTmp [len++] = HEADER_ID ;
-    szTmp [len++] = PROTOKOL_ID ;
+    szTmp [len++] = PROTOCOL_ID ;
     szTmp [len++] =2;
     szTmp [len++] =3;
     szTmp [len++]  =  50-Volume*5;
@@ -221,7 +221,7 @@ uint8_t  szTmp[MAX_CMD_LEN];
 uint8_t len;
     len = 0;
     szTmp [len++] = HEADER_ID ;
-    szTmp [len++] = PROTOKOL_ID ;
+    szTmp [len++] = PROTOCOL_ID ;
     szTmp [len++] =2;
     szTmp [len++] =4;
     szTmp [len++] = 6 + (Squelch-1)*2;
@@ -240,8 +240,10 @@ uint8_t  szTmp[MAX_CMD_LEN];
     len = AR620x::setStation(szTmp ,ACTIVE_STATION, Freq, StationName);
     sendCommand(szTmp,len);
     radioState.ActiveFrequency=  Freq;
-    if(StationName != NULL)
+    if(StationName != NULL){
         strncpy(radioState.ActiveName, StationName, NAME_SIZE);
+        radioState.ActiveName[NAME_SIZE-1] = 0;
+    }
   return(true);
 }
 
@@ -252,8 +254,10 @@ uint8_t  szTmp[MAX_CMD_LEN];
     len = AR620x::setStation(szTmp ,PASSIVE_STATION, Freq, StationName);
     sendCommand(szTmp,len);
     radioState.PassiveFrequency =  Freq;
-    if(StationName != NULL)
-        strncpy(radioState.PassiveName, StationName, NAME_SIZE) ;
+    if(StationName != NULL){
+      strncpy(radioState.PassiveName, StationName, NAME_SIZE) ;
+      radioState.PassiveName[NAME_SIZE-1] = 0;
+    }
    return(true);
 }
 
@@ -264,7 +268,7 @@ uint8_t  szTmp[MAX_CMD_LEN];
     IntConvertStruct ActiveFreqIdx;  ActiveFreqIdx.intVal16  = Frq2Idx(radioState.ActiveFrequency );
     IntConvertStruct PassiveFreqIdx; PassiveFreqIdx.intVal16 = Frq2Idx(radioState.PassiveFrequency);
     szTmp [len++] = HEADER_ID ;
-    szTmp [len++] = PROTOKOL_ID ;
+    szTmp [len++] = PROTOCOL_ID ;
     szTmp [len++] = 5;
     szTmp [len++] = 22;
     szTmp [len++] = PassiveFreqIdx.intVal8[1];
@@ -285,15 +289,15 @@ uint8_t  szTmp[MAX_CMD_LEN];
 
         if( mode > 0  )
         {
-          sStatus.intVal16 |= DAUL;  // turn Dual Mode On
+          sStatus.intVal16 |= DUAL;  // turn Dual Mode On
         }
         else
         {
-          sStatus.intVal16 &= ~DAUL;   // turn Dual Mode Off
+          sStatus.intVal16 &= ~DUAL;   // turn Dual Mode Off
         }
         len = 0;
         szTmp [len++] = HEADER_ID ;
-        szTmp [len++] = PROTOKOL_ID ;
+        szTmp [len++] = PROTOCOL_ID ;
         szTmp [len++] =3;
         szTmp [len++] =12;
         szTmp [len++]  = sStatus.intVal8[1];
@@ -335,7 +339,7 @@ while (cnt < len)
   Command[Recbuflen++] =(uint8_t) String[cnt++];
 
   if(Recbuflen == 2)
-    if(Command[Recbuflen-1] != PROTOKOL_ID)
+    if(Command[Recbuflen-1] != PROTOCOL_ID)
       Recbuflen =0;
 
   if(Recbuflen >= 3)
@@ -345,7 +349,7 @@ while (cnt < len)
      {
        CRC.intVal8[1] =  Command[CommandLength+3];
        CRC.intVal8[0] =  Command[CommandLength+4];
-       CalCRC =CRCBitwise(Command, CommandLength+3);
+       CalCRC = CRCBitwise(Command, CommandLength+3);
        if(CalCRC  == CRC.intVal16)
        {
            if(!bSending)
@@ -424,7 +428,7 @@ assert(szCommand !=NULL);
         radioState.Changed = true;
         sStatus.intVal8[1] = szCommand[4] ;
         sStatus.intVal8[0] = szCommand[5] ;
-        if(sStatus.intVal16 & DAUL)
+        if(sStatus.intVal16 & DUAL)
          radioState.Dual = true;
         else
          radioState.Dual = false;

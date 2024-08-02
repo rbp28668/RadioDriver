@@ -29,7 +29,7 @@ void StationSelector::init() {
    pulse();
 }
 
-
+// Called once per loop once other data is processed to allow it to update.
 void StationSelector::pulse() {
   
   Selector* prev = _current;
@@ -55,10 +55,13 @@ void StationSelector::pulse() {
   // Pressed button for Nav display?
   if( _navSwitch->active() && _current != &channelSelector){
     if(!_rtDisplayed){
-      const RadioStation* station = static_cast<const RadioStation*>(_current->getChannel());
-      rtDisplay.set(station, _currentLat, _currentLon);
-      rtDisplay.show(&_display);
-      _rtDisplayed = true;
+      const Channel* channel = _current->getChannel();
+      if(channel != nullptr){  // Edge-case if no GPS then nearest channel may be null.
+        const RadioStation* station = static_cast<const RadioStation*>(channel);
+        rtDisplay.set(station, _currentLat, _currentLon);
+        rtDisplay.show(&_display);
+        _rtDisplayed = true;
+      }
     }
     _rtDisplayStart = millis(); // time from button release
   }

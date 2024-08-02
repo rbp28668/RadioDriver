@@ -219,6 +219,13 @@ void setup() {
   Serial2.begin(settings.gps1bps); // GPS input
   Serial3.begin(settings.gps2bps); // Secondary GPS input
   lastGpsFix = millis();
+
+  if(settings.ActiveFrequency) {
+    radio.putFreqActive(settings.ActiveFrequency, settings.ActiveName);
+  }
+  if(settings.StandbyFrequency){
+    radio.putFreqStandby(settings.StandbyFrequency, settings.StandbyName);
+  }
 }
 
 void loop() {
@@ -255,12 +262,12 @@ void loop() {
       unsigned long age;
       gps.f_get_position(&latitude, &longitude, &age);
 
-      Serial.println();
-      Serial.print("At ");
-      Serial.print(latitude);
-      Serial.print(",");
-      Serial.print(longitude);
-      Serial.println();
+      // Serial.println();
+      // Serial.print("At ");
+      // Serial.print(latitude);
+      // Serial.print(",");
+      // Serial.print(longitude);
+      // Serial.println();
 
       if(age != TinyGPS::GPS_INVALID_AGE && age < 10000) { // in last 10s
         selector.setPosition(latitude, longitude, age);
